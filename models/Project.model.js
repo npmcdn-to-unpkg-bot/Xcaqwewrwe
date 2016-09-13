@@ -8,13 +8,13 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var DepartmentSchema = new Schema({
+var ProjectSchema = new Schema({
     projectname : String ,
     projectdesc : String,
     muname : String,
     projectlead : String
 });
 
-module.exports = mongoose.model('Department' ,DepartmentSchema );
+module.exports = mongoose.model('Project' ,ProjectSchema );
 
 

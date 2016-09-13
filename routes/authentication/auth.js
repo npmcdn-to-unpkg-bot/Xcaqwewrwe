@@ -1,16 +1,18 @@
 var express = require("express");
-var MongoClient = require('mongodb').MongoClient;
-var db = require("../database");
 var passport = require("passport");
 
 var router = express.Router();
 module.exports = router;
 
 
+//******************************    MONGOOSE CONNECTION    *********************************
+
+var Profile = require('../../models/Profile.model');
+
+//************************************************************************************
 
 var http = require('http').Server(router);
 var io = require('socket.io')(http);
-
 
 router.get("/login", function (request, response) {
    /* if(request.app.get('env') === 'development'){
@@ -28,40 +30,31 @@ router.get("/login", function (request, response) {
     response.render("login");
 });
 
-
-
-
-
 router.post("/login", passport.authenticate('local', {
     successRedirect: '/home',
     failureRedirect: '/login'
 }));
 
 router.get("/logout", function (request,response) {
-
-
     io.on('connection', function(socket){
         socket.broadcast.emit('logoff' , "sfdf");
     });
 
-    //***************************   OFFLINE TRACKER START ******************************   
-        var query = { euname :request.user.username  };
-        MongoClient.connect(db, function(err, db) {
-            if(err) throw err;
+//***************************   OFFLINE TRACKER ******************************************
 
-            doc = {$set:{status:"offline" }};
-            db.collection('profiles').update(query, doc, function(err, updated) {
-                if(err) throw err;
-                console.log( query.euname+ " went Offline");
-                return db.close();
-            });
+    var query = {euname :request.user.username  };
+    doc = {$set:{status:"offline" }};
+
+    Profile.findOneAndUpdate(query, doc , function(err, updated){
+        if(err) throw err;
+        console.log( query.euname +" went Offline");
+    });
 
 
-            //***************************   OFFLINE TRACKER END ******************************
-            
+//*********************************************************************************
+
     request.logout();
 
     response.redirect("/login");
 
     });
-});

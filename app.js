@@ -41,6 +41,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 
+//******************************    MONGOOSE CONNECTION    *********************************
+var mongoose = require('mongoose')
+var dbm = 'mongodb://localhost:27017/office';
+mongoose.connect(dbm);
+
+
+var Profile = require('./models/Profile.model');
+
+//************************************************************************************
+
+
+
+
 // ****************************     PASSPORT-START     ***************************
 app.use(require('express-session')({
     secret: 'keyboard cat', resave: false, saveUninitialized: false
@@ -49,11 +62,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
+//********************************ROUTES OUT OF AUTHENTICATION****************************************
 app.get('/testbay' , function (req, res) {
     res.render('testbay')
 });
-
-
 
 var authRouter = require("./routes/authentication/auth");
 app.use(authRouter);
@@ -61,8 +73,7 @@ app.use(authRouter);
 var newuserRouter = require("./routes/authentication/newuser");
 app.use(newuserRouter);
 
-
-
+//****************************************************************************************************
 
 app.use(function (request,response, next) {
     if(request.isAuthenticated()){
@@ -72,40 +83,25 @@ app.use(function (request,response, next) {
     response.redirect("/login");
 });
 
+// ***************************************************************************************************
 
-
-
-
-// ****************************     PASSPORT-END     ***************************
-// Routes
-
-app.get('/home', function (req, res) {
-    io.on('connection', function(socket){
-        socket.broadcast.emit('log');
-    });
-    data = req.session.passport.user;
-
-
-
- //***************************   ONLINE TRACKER START ******************************
-
-
-    MongoClient.connect(db, function(err, db) {
-        if(err) throw err;
-        var query = { euname :req.user.username  };
-        doc = {$set:{status:"online" }};
-        db.collection('profiles').update(query, doc, function(err, updated) {
-            if(err) throw err;
-            console.log( req.user.username +" is Online");
-            return db.close();
+//****************************************************************************************************
+// ****************************************ROUTES****************************************************
+//****************************************************************************************************
+    app.get('/home', function (req, res) {
+        io.on('connection', function(socket){
+            socket.broadcast.emit('log');
         });
+    data = req.session.passport.user;
+//***************************   ONLINE TRACKER START **************************************************
+    var query = {euname :req.user.username  };
+    doc = {$set:{status:"online" }};
 
-
-
+    Profile.findOneAndUpdate(query, doc , function(err, updated){
+        if(err) throw err;
+        console.log( req.user.username +" is Online");
     });
-
-
-    //***************************   ONLINE TRACKER END ******************************
+//*****************************************************************************************************
 
 
 
@@ -162,17 +158,10 @@ app.get('/partials/manager/:name', function (req, res) {
     var name = req.params.name;
     res.render('partials/manager/' + name);
 });
-
-
 //******************************      ROUTERS-START      *********************************
-
 
 var apiRouter = require("./apiRouter");
 app.use(apiRouter);
-
-
-
-
 
 app.get('*', function (req, res) {
     res.render('index');

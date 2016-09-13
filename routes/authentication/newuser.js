@@ -15,12 +15,15 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: true}));
 var db = require("../database");
 
-var mongoose = require('mongoose')
-var dbm = 'mongodb://localhost:27017/office';
-mongoose.connect(dbm);
+
+
+//******************************    Mongoose Connection    *********************************
+
 
 var User = require('../../models/User.model');
 var Profile = require('../../models/Profile.model');
+
+//************************************************************************************
 
 
 router.get('/newuser' , function (req , res) {
