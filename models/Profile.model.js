@@ -14,7 +14,9 @@ var ProfileSchema = new Schema({
     muname : String,
     euname : String,
     password : String,
-    status : String
+    status : String,
+    checked : Boolean,
+    pname : Array
 });
 
 module.exports = mongoose.model('Profile' ,ProfileSchema );

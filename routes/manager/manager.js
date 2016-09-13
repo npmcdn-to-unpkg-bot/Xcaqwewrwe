@@ -15,9 +15,18 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: true}));
 
 
+//******************************    Mongoose Connection    *********************************
 
-//*************************************     API    ***************************************
 
+var User = require('../../models/User.model');
+var Profile = require('../../models/Profile.model');
+var Department = require('../../models/Department.model');
+var Project = require('../../models/Project.model');
+
+//************************************************************************************
+
+
+//*****************************Use this for router level authentication****************************************
 
 /*router.use(function (request,response, next) {
     if(request.user.manager===true){
@@ -35,65 +44,53 @@ router.get("/getuser", function(req, res){
 });
 
 //*******************************  GET ALL TEAM MEMBER    ***********************
-// var query = {uname:req.user.uname}
 
 router.get('/api/team' , function (req,res) {
     var query = {muname:req.user.username};
-    MongoClient.connect(db, function (err, db) {
+    Profile.find(query).sort({name:1}).exec(function(err,doc) {
         if (err) {throw err;}
-        db.collection('profiles').find(query).sort({name:1}).toArray(function (err, doc) {
-            if (err) {throw err;}
-            res.send(doc);
-        });
-        console.log("Rooms page has been accessed.");
+        res.send(doc);
     });
 });
 
 router.get('/api/getteamfordept/:deptname' , function (req,res) {
-    MongoClient.connect(db, function (err, db) {
+    var query = {deptname:req.params.deptname , muname:req.user.username};
+    Profile.find(query).sort({name:1}).exec(function(err,doc) {
         if (err) {throw err;}
-        query = {deptname:req.params.deptname , muname:req.user.username};
-        db.collection('profiles').find(query).sort({name:1}).toArray(function (err, doc) {
-            if (err) {throw err;}
-            res.send(doc);
-        });
-        console.log("Rooms page has been accessed.");
+        res.send(doc);
     });
-    
 });
-
 
 //*******************************  ADD A TEAM MEMBER    ***********************
 router.post("/teamadd", function(req, res){
-    //name = req.body.memberName;
-    //role = req.body.memberRole;
 
-    MongoClient.connect(db, function(err, db) {
-        if(err) throw err;
-        var profiledoc = { name:req.body.name,
-            role:req.body.role ,
-            deptname:req.body.deptname,
-            muname:req.user.username,
-            euname:req.body.euname,
-            password: "12345",
-            status:"offline"
-        };
-        var userdoc = {
-            uname:req.body.euname,
-            password: "12345",
-            manager:false
-        };
-        db.collection('profiles').insert(profiledoc, function(err, inserted) {
-            if(err) throw err;
-            console.dir("Successfully inserted: " + JSON.stringify(inserted));
-        });
-        db.collection('users').insert(userdoc, function(err, inserted) {
-            if(err) throw err;
-            console.dir("Successfully inserted: " + JSON.stringify(inserted));
-            return db.close();
-        });
-
+    var userdoc = new User({
+        uname:req.body.euname,
+        password: "12345",
+        manager:false
     });
+
+    var profiledoc = new Profile({
+        name:req.body.name,
+        role:req.body.role ,
+        deptname:req.body.deptname,
+        muname:req.user.username,
+        euname:req.body.euname,
+        password: "12345",
+        status:"offline",
+        checked : false
+    });
+
+    userdoc.save(function(err) {
+        if (err) throw err;
+        console.log('Team Member saved successfully!');
+    });
+
+    profiledoc.save(function(err) {
+        if (err) throw err;
+        console.log('Team Member Profile saved successfully!');
+    });
+
     res.send("team member added");
 });
 
@@ -101,19 +98,15 @@ router.post("/teamadd", function(req, res){
 
 
 router.post("/departmentadd", function(req, res){
-    MongoClient.connect(db, function(err, db) {
-        if(err) throw err;
-        var doc = { deptname:req.body.name ,
-                    muname:req.user.username
-                        };
 
-        db.collection('departments').insert(doc, function(err, inserted) {
-            if(err) throw err;
+    var Department_doc = new Department({
+        deptname:req.body.name ,
+        muname:req.user.username
+    });
 
-            console.dir("Successfully inserted: " + JSON.stringify(inserted));
-
-            return db.close();
-        });
+    Department_doc.save(function(err) {
+        if (err) throw err;
+        console.log('Department saved successfully!');
     });
     res.send("department added");
 });
@@ -122,55 +115,54 @@ router.post("/departmentadd", function(req, res){
 
 router.get('/api/department' , function (req,res) {
     var query = {muname:req.user.username};
-    MongoClient.connect(db, function (err, db) {
+    Department.find(query).sort({name:1}).exec(function(err,doc) {
         if (err) {throw err;}
-        db.collection('departments').find(query).sort({name:1}).toArray(function (err, doc) {
-            if (err) {throw err;}
-            res.send(doc);
-        });
-        console.log("Department page has been accessed.");
+        res.send(doc);
     });
 });
 
 //*******************************  ADD A PROJECT    ***********************
 router.post("/projectadd", function(req, res){
-    MongoClient.connect(db, function(err, db) {
-        if(err) throw err;
-        var projectdoc = {
+
+        var projectdoc = new Project({
             projectname:req.body.projectname ,
             projectdesc: req.body.projectdescription,
             muname:req.user.username,
             projectlead:req.user.username
-        };
+        });
+
+        projectdoc.save(function(err) {
+            if (err) throw err;
+            console.log('Project saved successfully!');
+        });
 
         req.body.teamdata.forEach(function (member) {
-            db.collection('profiles').update({name:member},{$push:{pname:req.body.projectname}} ,{upsert:true});
+            var query = {name:member};
+            var doc = {$push:{pname:req.body.projectname}};
+            var options  = {upsert:true};
+
+            Profile.findOneAndUpdate(query, doc , options, function(err, updated){
+                if(err) throw err;
+                console.log(updated);
+            });
+
         });
-
-
-        db.collection('projects').insert(projectdoc, function(err, inserted) {
-            if(err) throw err;
-            console.dir("Successfully inserted: " + JSON.stringify(inserted));
-        });
-
-
+/*
+    req.body.teamdata.forEach(function (member) {
+        db.collection('profiles').update({name:member},{$push:{pname:req.body.projectname}} ,{upsert:true});
     });
     res.send("department added");
+    */
 });
 
 //*******************************  GET ALL PROJECTS   ***********************
 router.get('/api/projects' , function (req,res) {
     var query = {muname:req.user.username};
-    MongoClient.connect(db, function (err, db) {
+    Project.find(query).sort({name:1}).exec(function(err,doc) {
         if (err) {throw err;}
-        db.collection('projects').find(query).sort({name:1}).toArray(function (err, doc) {
-            if (err) {throw err;}
-            res.send(doc);
-        });
-        console.log("Department page has been accessed.");
+        res.send(doc);
     });
-
-})
+});
 
 router.get('/api/getteamforproject/:projectname' , function (req,res) {
     MongoClient.connect(db, function (err, db) {

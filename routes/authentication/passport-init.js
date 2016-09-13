@@ -24,6 +24,8 @@ passport.use(new LocalStrategy(function(username, password, done){
             passwrd = doc.password;
 
             //console.dir("Successfully deleted a document!");
+            
+            //****varibales that is need to be sent over 'user' object in the request********
             var user = {username:username,password:doc.password , role:doc.role};
             if(!user || user.password !== password){
                 done(null, false);
