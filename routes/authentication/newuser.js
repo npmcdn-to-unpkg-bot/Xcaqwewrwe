@@ -53,7 +53,7 @@ router.post('/newuser' , function (req,res) {
             if (err) throw err;
             console.log('User Profile saved successfully!');
         });
-
+//some comment to test the  
     res.redirect("login");
     
 });
