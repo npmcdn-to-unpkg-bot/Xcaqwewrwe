@@ -1,0 +1,15 @@
+div.bg-white
+    div(style='margin-top:-5%;box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.8);')
+        h1.center-text(style='padding-top:4%') {{deptName}}
+        table.table.table-responsive(class='animated fadeIn', ng-class='dynclass')
+            thead
+                tr
+                    th(style='text-align:center;width:30%') Team Members
+                    th(style='text-align:center;width:30%') Role
+
+
+            tbody#tab
+                tr.add-room(ng-repeat='teammember in teammembers')
+                    td(style='text-align:center')
+                        a#grow( style='color:black',href='/department/{{department.deptname}}') {{teammember.name}}
+                    td(style='text-align:center') {{teammember.role}}

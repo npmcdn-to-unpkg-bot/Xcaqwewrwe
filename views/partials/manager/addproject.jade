@@ -1,0 +1,48 @@
+//
+   Created by Jazz on 7/12/2016.
+
+//
+   Created by Jazz on 7/12/2016.
+
+//
+   //Created by Jazz on 7/9/2016.
+div.bg-white
+    div.form-group(style='margin-top:-5%;box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.8);')
+        h1.center-text(style='padding-top:4%') Add a New Project
+            br
+            br
+            input.form-control.sharp.center(ng-model='projectName',type='text', name='projectName', placeholder='Project name', style='width: 30%;' )
+            br
+            textarea.form-control.sharp.center( rows= '5' , cols='10',ng-model='projectdescription',type='text', name='projectdescription', placeholder='Project Description', style='width: 70%;' )
+            br
+            label(style='margin-right:2%')
+                input(type='radio' , ng-model='assignitto',value='self' , name='assign')
+                span(style='font-size:0.4em') Self Assign
+            label
+                input(type='radio' , ng-model='assignitto',value='projectlead' , name='assign')
+                span(style='font-size:0.4em') Assign it to project lead
+        br
+        table.table.table-responsive(class='animated fadeIn', ng-class='dynclass')
+            thead
+                tr
+                    th(style='text-align:center;width:30%') Select
+                    th(style='text-align:center;width:30%') Name
+                    th(style='text-align:center;width:30%') Role
+                    th(style='text-align:center;width:30%') Department
+            tbody#tab
+                tr.add-room(ng-repeat='member in members')
+                    td
+                        input(type='checkbox',name='check' , ng-model='member.checked' )
+                    td(style='text-align:center')
+                        a#grow( style='color:black',href='/roompage/{{member.name}}') {{member.name}}
+                    td(style='text-align:center') {{member.role}}
+                    td(style='text-align:center') {{member.deptname}}
+
+        br
+        br
+
+        button.btn.btn-primary.sharp#grow( ng-click='continue()', style='margin-left:40%;margin-bottom:10%;display:inline-block;height:4em;width:8em' ) Add
+        a.btn.btn-danger.center-button.sharp#grow(role='button' , href='/project' ,style='margin-bottom:10%;margin-left:3%;height:4em;display:inline-block;width:8em;padding-top:1%') Back
+//
+   Created by Jazz on 7/18/2016.
+

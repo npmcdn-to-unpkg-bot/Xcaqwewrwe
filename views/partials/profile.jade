@@ -1,0 +1,29 @@
+//
+   Created by Jazz on 7/9/2016.
+div.bg-white
+    div(style='margin-right:1%;margin-left:1%;margin-top:-1% ;height:600px ; box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.8);')
+        h2.center-text(style='padding-top:2%') {{user.username}}
+        br
+        div.bg-white(ng-hide="swt")
+            img(src='/img/user.png' , style='width:10% ; margin-left:45%')
+            br
+            br
+            br
+            h4.center-text Username :   {{user.username}}
+            h4.center-text Password :   *********
+        form(ng-show="swt")
+            img(src='/img/user.png' , style='width:10% ; margin-left:45%')
+            br
+            br
+            input.form-control(placeholder='Username',ng-model='user.username', style='margin: 0 auto;width:30%;height:4em')
+            br
+            input.form-control(placeholder='New password',ng-model='roomname', style='margin: 0 auto;width:30%;height:4em')
+        br
+        br
+        br
+        div(ng-hide="swt")
+            button.btn.btn-primary.sharp#grow(ng-click='swt = !swt' , style='margin-left:40%;display:inline-block;height:4em;width:8em' ) Edit
+            a.btn.btn-danger.center-button.sharp#grow(role='button' , href='/home' ,style='margin-left:3%;height:4em;display:inline-block;width:8em;padding-top:1%') Back
+        div(ng-show="swt" )
+            button.btn.btn-success.sharp#grow( style='margin-left:40%;display:inline-block;height:4em;width:8em' ) Save
+            button.btn.btn-danger.sharp#grow(ng-click='swt = !swt', style='margin-left:3%;display:inline-block;height:4em;width:8em' ) Cancel

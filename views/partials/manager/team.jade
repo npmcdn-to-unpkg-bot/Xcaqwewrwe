@@ -1,0 +1,37 @@
+//
+   Created by Jazz on 7/12/2016.
+
+//
+   //Created by Jazz on 7/9/2016.
+div.bg-white
+    div(style='margin-top:-5%;box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.8);')
+        h1.center-text(style='padding-top:4%') Team Members
+        a.btn.btn-info.center-button.sharp#grow(role='button' , href='/addteam' ,style='height:4em;width:8em;padding-top:1%;margin-bottom:2%') Add
+        span(style='margin-right:1%;margin-left:5%') Search :
+        input(type='text', ng-model='search.name' , placeholder='Name')
+        span(style='margin-right:1%;margin-left:3%') Search :
+        input(type='text', ng-model='search.role' , placeholder='Role')
+        span(style='margin-right:1%;margin-left:3%') Search :
+        input(type='text', ng-model='search.deptname' , placeholder='Department')
+        button.btn.btn-primary#grow(ng-click='search = undefined',style='margin-left:3%') Clear filter
+        table.table.table-responsive(class='animated fadeIn', ng-class='dynclass')
+            thead
+                tr
+                    th(style='text-align:center;width:30%') Name
+                    th(style='text-align:center;width:30%') Role
+                    th(style='text-align:center;width:30%') Departments
+                    th(style='text-align:center;width:30%') Status
+            tbody#tab
+                tr.add-room(ng-repeat='member in members | filter : search | orderBy:"name" ')
+
+                    td(style='text-align:center' , id="{{member.name}}")
+                        a#grow( style='color:black',href='/roompage/{{member.name}}') {{member.name}}
+                    td(style='text-align:center') {{member.role}}
+                    td(style='text-align:center') {{member.deptname}}
+                    td(style='text-align:center')
+                        div(ng-if="member.status == 'online'")
+                            div.spiningcircleon.center
+                        div(ng-if="member.status == 'offline'")
+                            div.spiningcircleoff.center
+
+

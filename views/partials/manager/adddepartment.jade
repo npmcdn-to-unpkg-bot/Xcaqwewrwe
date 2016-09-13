@@ -1,0 +1,13 @@
+//
+   Created by Jazz on 7/12/2016.
+
+div.bg-white
+    div(style='margin-top:-5%;box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.8);')
+        h1.center-text(style='padding-top:4%') Add a New Department
+            br
+            br
+            input.form-control.sharp.center(ng-model='deptName',type='text', name='deptName', placeholder='Name', style='width: 30%;' )
+            br
+        br
+        button.btn.btn-primary.sharp#grow( ng-click='adddept()', style='margin-left:40%;margin-bottom:10%;display:inline-block;height:4em;width:8em' ) Add
+        a.btn.btn-danger.center-button.sharp#grow(role='button' , href='/team' ,style='margin-bottom:10%;margin-left:3%;height:4em;display:inline-block;width:8em;padding-top:1%') Back

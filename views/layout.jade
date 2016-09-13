@@ -1,0 +1,98 @@
+doctype
+html(ng-app="myApp")
+    head
+        meta(charset='utf8')
+        meta(http-equiv='x-ua-compatible', content='ie=edge')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0', maximum-scale='1.0')
+        base(href='/')
+        title Home
+        link(rel='stylesheet', href='/css/bootstrap.min.css', <='', body = '')
+        //link(rel='styleSheet' , href='https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.css')
+
+        link(rel='stylesheet', href='/css/animate.css')
+        link(rel='stylesheet', href='/css/app.css')
+
+
+
+    nav(style='position: fixed; width: 100%; box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.8);background-color:#EF4138 ; z-index:2' , ng-controller="appcontroller")
+        div
+            h2(style='display:inline-block; margin-left:45%')
+                a(href='/home', style='color: white') APP
+            h3(style='display:inline-block ; float:right;margin-right:5%;color: white'  ) Welcome {{user.uname}}
+            h4(style='margin-bottom:3%')
+                a#grow(href='/logout' , target='_self',ng-click="logofff()",style='float:right ;margin-left:2%;margin-right:5%') Logout
+                a#sockettest(href='/profile', style='float:right;margin-left:2%') My Profile
+                a#grow(href='/team', style='float:right;margin-left:2%') Team
+                a#grow(href='/home', style='float:right;margin-left:2%') Home
+                a#grow(href='/project', style='float:right;margin-left:2%') Projects
+                a#grow(href='/department', style='float:right;') Departments
+
+
+    body(style='background-color:#F7F7F9')
+        div
+            block body
+
+
+    script(src='/jquery.min.js' , type = "text/javascript")
+    script(src='/angular.min.js')
+    script(src='/angular-route.min.js')
+    script(src='/angular-messages.js')
+    script(src='/angular-animate.js')
+    script(src='/socket.io/socket.io.js')
+    script(src="https://cdn.rawgit.com/Luegg/angularjs-scroll-glue/master/src/scrollglue.js")
+    script(src="https://rawgithub.com/gsklee/ngStorage/master/ngStorage.js")
+    script.
+        var socket = io();
+
+
+
+
+        $(function () {
+            $("#sockettest").click(function () {
+
+
+                socket.on('news', function (data) {
+                    console.log(data);
+                    socket.emit('logintest', {my: 'data'});
+                });
+            });
+
+            });
+
+
+
+        console.log('inside the script');
+        socket.on('chat message', function (msg) {
+            console.log(msg);
+            $('#tab').append("<tr class = 'animated fadeIn'><td style='text-align: center'><a href='/roompage'>"+msg+"</a></td>" +
+                    "<td style='text-align: center'>N/A</td>" +
+                    "<td style='text-align: center'>4311de04-a302-453a-a4b0-b309ef2e7ae0</td>" +
+                    "<td style='text-align: center'><a class='btn btn-default'  id='grow' role='button' href='/edit/'"+msg+" >Edit</a></td>" +
+                    "<td style='text-align: center'> <button class='btn btn-danger' id='grow' ng-click='deletefunc("+msg+")'>Delete</button></td></tr>");
+        });
+
+        socket.on('addmsgio', function (msg) {
+            console.log(msg);
+            $('#msgbox').append("<p class = 'message animated fadeIn'>"+msg+"</p>");
+            var objDiv = document.getElementById("msgbox");
+            objDiv.scrollTop = objDiv.scrollHeight;
+        });
+        $(function () {
+            $("#btn-msgs").click(function () {
+                var msgcnt = $("#inputbox").val()
+                var ptag = "<p>" + msgcnt + "</p>";
+                $("#msgbox").append(ptag);
+
+
+
+            });
+
+        });
+
+    script(src='js/app.js')
+    script(src='js/services.js')
+    script(src='js/controllers.js')
+    script(src='js/mycontroller.js')
+    script(src='js/myservice.js')
+    script(src='js/filters.js')
+    script(src='js/directives.js')            
